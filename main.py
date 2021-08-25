@@ -1,33 +1,44 @@
-import csv
-import random
-import time
+from itertools import count
+import pandas as pd
+from matplotlib import pyplot as plt
+from matplotlib.animation import FuncAnimation
 
-x_value = 0
-total_1 = 1000
-total_2 = 1000
+plt.style.use('seaborn')
 
-fieldnames = ["x_value", "total_1", "total_2"]
+x_vals = []
+y_vals = []
 
-with open('data.csv', 'w') as csv_file:
-    csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
-    csv_writer.writeheader()
+index = count()
 
-while True:
+fig, (ax1, ax2) = plt.subplots(nrows=2, ncols=1, sharex=True)
+print(ax1)
+print(ax2)
 
-   with open('data.csv', 'a') as csv_file:
-       csv_writer = csv.DictWriter(csv_file, fieldnames=fieldnames)
+def animate(i):
+    data = pd.read_csv('w_drag_data.csv')
+    x = data['x_pos']
+    y = data['y_pos']
 
-       info = {
-           "x_value": x_value,
-           "total_1": total_1,
-           "total_2": total_2
-       }
+    ax1.cla()
+    ax1.plot(x, y, label='Position')
 
-       csv_writer.writerow(info)
-       print(x_value, total_1, total_2)
+    ax1.legend(loc='upper left')
+    plt.tight_layout()
 
-       x_value += 1
-       total_1 = total_1 + random.randint(-6, 8)
-       total_2 = total_2 + random.randint(-5, 6)
+def animate2(i):
+    data = pd.read_csv('wo_drag_data.csv')
+    x = data['x_pos']
+    y = data['y_pos']
 
-   time.sleep(1)
+    ax2.cla()
+    ax2.plot(x, y, label='Position')
+
+    ax2.legend(loc='upper left')
+    plt.tight_layout()
+
+ani = FuncAnimation(plt.gcf(), animate, interval=1000)
+
+ani2 = FuncAnimation(plt.gcf(), animate2, interval=1000)
+
+plt.tight_layout()
+plt.show()
